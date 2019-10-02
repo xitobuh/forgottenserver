@@ -76,6 +76,12 @@ classicEquipmentSlots = false
 classicAttackSpeed = false
 showScriptsLogInConsole = true
 
+-- elf bot auto attack protection
+maxAttacksInterval = 500
+maxAttacksPerInterval = 2
+-- player that was detected using auto targetter gets exhausted to target players for that amount of miliseconds.
+botExhaust = 1500
+
 -- Rates
 -- NOTE: rateExp is not used if you have enabled stages in data/XML/stages.xml
 rateExp = 5

@@ -972,6 +972,10 @@ class Player final : public Creature, public Cylinder
 			lastPong = OTSYS_TIME();
 		}
 
+		bool isBotExhausted() const {
+			return botExhausted > OTSYS_TIME();
+		}
+
 		void onThink(uint32_t interval) override;
 
 		void postAddNotification(Thing* thing, const Cylinder* oldParent, int32_t index, cylinderlink_t link = LINK_OWNER) override;
@@ -1083,6 +1087,10 @@ class Player final : public Creature, public Cylinder
 		int64_t lastPing;
 		int64_t lastPong;
 		int64_t nextAction = 0;
+
+		int64_t lastTryAttack = 0;
+		uint64_t tryAttackCount = 0;
+		int64_t botExhausted = 0;
 
 		BedItem* bedItem = nullptr;
 		Guild* guild = nullptr;

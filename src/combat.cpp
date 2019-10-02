@@ -224,6 +224,10 @@ ReturnValue Combat::canTargetCreature(Player* attacker, Creature* target)
 		if (attacker->hasSecureMode() && !Combat::isInPvpZone(attacker, target) && attacker->getSkullClient(target->getPlayer()) == SKULL_NONE) {
 			return RETURNVALUE_TURNSECUREMODETOATTACKUNMARKEDPLAYERS;
 		}
+
+		if (attacker->isBotExhausted()) {
+			return RETURNVALUE_YOUMAYNOTATTACKTHISPLAYER;
+		}
 	}
 
 	return Combat::canDoCombat(attacker, target);

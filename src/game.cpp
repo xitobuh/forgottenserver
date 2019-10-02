@@ -2901,6 +2901,20 @@ void Game::playerSetAttackedCreature(uint32_t playerId, uint32_t creatureId)
 		return;
 	}
 
+	if (attackCreature->getPlayer()) {
+		if (player->lastTryAttack > OTSYS_TIME() && player->tryAttackCount >= g_config.getNumber(ConfigManager::MAX_ATTACKS_PER_INTERVAL)) {
+			player->botExhausted = OTSYS_TIME() + g_config.getNumber(ConfigManager::BOT_EXHAUST_TIME);
+		} else if (player->lastTryAttack <= OTSYS_TIME()) {
+			player->tryAttackCount = 0;
+			player->lastTryAttack = 0;
+		}
+
+		player->tryAttackCount += 1;
+		if (player->lastTryAttack == 0) {
+			player->lastTryAttack = OTSYS_TIME() + g_config.getNumber(ConfigManager::MAX_ATTACKS_INTERVAL);
+		}
+	}
+
 	ReturnValue ret = Combat::canTargetCreature(player, attackCreature);
 	if (ret != RETURNVALUE_NOERROR) {
 		player->sendCancelMessage(ret);
