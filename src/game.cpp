@@ -2143,6 +2143,9 @@ void Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	player->setNextActionTask(nullptr);
 
 	g_actions->useItem(player, pos, index, item, isHotkey);
+	if (item->getCorpseOwner() != 0) {
+		player->lootCorpse(item->getContainer());
+	}
 }
 
 void Game::playerUseWithCreature(uint32_t playerId, const Position& fromPos, uint8_t fromStackPos, uint32_t creatureId, uint16_t spriteId)
@@ -2483,6 +2486,11 @@ void Game::playerUpdateHouseWindow(uint32_t playerId, uint8_t listId, uint32_t w
 {
 	Player* player = getPlayerByID(playerId);
 	if (!player) {
+		return;
+	}
+
+	if (windowTextId == std::numeric_limits<uint32_t>().max()) {
+		player->parseAutoLootWindow(text);
 		return;
 	}
 

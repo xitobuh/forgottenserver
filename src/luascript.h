@@ -996,6 +996,8 @@ class LuaScriptInterface
 		static int luaPlayerHasSecureMode(lua_State* L);
 		static int luaPlayerGetFightMode(lua_State* L);
 
+		static int luaPlayerSendAutoLootWindow(lua_State* L);
+
 		// Monster
 		static int luaMonsterCreate(lua_State* L);
 

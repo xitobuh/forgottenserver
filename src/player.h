@@ -103,6 +103,14 @@ struct Skill {
 	uint8_t percent = 0;
 };
 
+using AutoLootMap = std::map<uint16_t, std::pair<uint16_t, bool>>;
+
+struct AutoLootConfig {
+	AutoLootMap itemList;
+	bool lootAnything = false;
+	std::string text;
+};
+
 using MuteCountMap = std::map<uint32_t, uint32_t>;
 
 static constexpr int32_t PLAYER_MAX_SPEED = 1500;
@@ -1142,6 +1150,12 @@ class Player final : public Creature, public Cylinder
 		void forgetInstantSpell(const std::string& spellName);
 		bool hasLearnedInstantSpell(const std::string& spellName) const;
 
+		//Autoloot
+		void sendAutoLootWindow() const;
+		void parseAutoLootWindow(const std::string& text);
+		Container* findNonEmptyContainer(uint16_t itemId);
+		void lootCorpse(Container* container);
+
 	private:
 		std::forward_list<Condition*> getMuteConditions() const;
 
@@ -1214,6 +1228,8 @@ class Player final : public Creature, public Cylinder
 		LightInfo itemsLight;
 		Position loginPosition;
 		Position lastWalkthroughPosition;
+
+		AutoLootConfig autolootConfig;
 
 		time_t lastLoginSaved = 0;
 		time_t lastLogout = 0;

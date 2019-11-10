@@ -4529,3 +4529,150 @@ void Player::setGuild(Guild* guild)
 		oldGuild->removeMember(this);
 	}
 }
+
+// Autoloot
+void Player::sendAutoLootWindow() const
+{
+	if (!client) {
+		return;
+	}
+
+	client->sendHouseWindow(std::numeric_limits<uint32_t>().max(), autolootConfig.text);
+}
+
+void Player::parseAutoLootWindow(const std::string& text)
+{
+	if (text.empty()) {
+		autolootConfig.lootAnything = false;
+		autolootConfig.text.clear();
+		return;
+	}
+
+	if (autolootConfig.text == text) {
+		return;
+	}
+
+	autolootConfig.itemList.clear();
+
+	std::istringstream stream(text);
+	std::string line;
+	StringVector vec;
+	std::pair<std::map<uint16_t, std::pair<uint16_t, bool>>::iterator, bool> ret;
+	while (getline(stream, line)) {
+		trimString(line);
+		trim_left(line, '\t');
+		trim_right(line, '\t');
+		trimString(line);
+
+		if (line.empty()) {
+			continue;
+		}
+
+		if (line.front() == '*') {
+			autolootConfig.lootAnything = true;
+			autolootConfig.text = text;
+			return;
+		} else {
+			autolootConfig.lootAnything = false;
+		}
+
+		vec = std::move(explodeString(line, ",", 1));
+		if (vec.size() != 2) {
+			continue;
+		}
+
+		uint16_t itemId = Item::items.getItemIdByName(vec[0]);
+		if (itemId == 0) {
+			continue;
+		}
+
+		trim_left(vec[1], ' ');
+		uint16_t backpackId = Item::items.getItemIdByName(vec[1]);
+
+		ret = autolootConfig.itemList.insert(std::make_pair(itemId, std::make_pair(backpackId, line.front() != '#')));
+		if (ret.second) {
+			ret.first->second.first = backpackId;
+			ret.first->second.second = line.front() != '#';
+		}
+	}
+	autolootConfig.text = text;
+}
+
+Container* Player::findNonEmptyContainer(uint16_t itemId)
+{
+	Container* mainBackpack = inventory[CONST_SLOT_BACKPACK] ? inventory[CONST_SLOT_BACKPACK]->getContainer() : nullptr;
+	if (!mainBackpack) {
+		return nullptr;
+	}
+
+	std::vector<Container*> containers;
+	for (size_t i = mainBackpack->getFirstIndex(), j = mainBackpack->getLastIndex(); i < j; ++i) {
+		Thing* thing = mainBackpack->getThing(i);
+		if (!thing) {
+			continue;
+		}
+
+		Container* container = thing->getContainer();
+		if (!container) {
+			continue;
+		}
+
+		if (container->getID() == itemId && container->size() != container->capacity()) {
+			return container;
+		}
+
+		containers.push_back(container);
+	}
+
+	size_t i = 0;
+	while (i < containers.size()) {
+		Container* container = containers[i++];
+		for (Item* item : container->getItemList()) {
+			Container* subContainer = item->getContainer();
+			if (subContainer) {
+				if (subContainer->getID() == itemId && subContainer->size() != subContainer->capacity()) {
+					return subContainer;
+				}
+
+				containers.push_back(subContainer);
+			}
+		}
+	}
+	return nullptr;
+}
+
+void Player::lootCorpse(Container* container)
+{
+	if (!container) {
+		return;
+	}
+
+	if (container->getCorpseOwner() != id) {
+		sendCancelMessage(RETURNVALUE_YOUARENOTTHEOWNER);
+		return;
+	}
+
+	std::vector<std::pair<Item*, uint16_t>> toMove;
+
+	AutoLootMap::iterator iter;
+	for (ContainerIterator it = container->iterator(); it.hasNext(); it.advance()) {
+		Item* item = *it;
+		if (autolootConfig.lootAnything) {
+			toMove.push_back(std::make_pair(item, 0));
+		} else {
+			iter = autolootConfig.itemList.find(item->getID());
+			if (iter != autolootConfig.itemList.end() && iter->second.second) {
+				toMove.push_back(std::make_pair(item, iter->second.first));
+			}
+		}
+	}
+
+	for (const auto& pair : toMove) {
+		Item* backpack = pair.second == 0 ? inventory[CONST_SLOT_BACKPACK] : findNonEmptyContainer(pair.second);
+		if (!backpack) {
+			continue;
+		}
+
+		g_game.internalMoveItem(container, backpack->getContainer(), INDEX_WHEREEVER, pair.first, pair.first->getItemCount(), nullptr);
+	}
+}
