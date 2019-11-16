@@ -74,6 +74,12 @@ CREATE TABLE IF NOT EXISTS `players` (
   KEY `vocation` (`vocation`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
+CREATE TABLE IF NOT EXISTS `player_autolootconfig` (
+  `player_id` int(11) NOT NULL,
+  `config` blob NOT NULL,
+  PRIMARY KEY (`player_id`)
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
 CREATE TABLE IF NOT EXISTS `account_bans` (
   `account_id` int(11) NOT NULL,
   `reason` varchar(255) NOT NULL,
