@@ -97,26 +97,6 @@ enum itemAttrTypes : uint32_t {
 enum VipStatus_t : uint8_t {
 	VIPSTATUS_OFFLINE = 0,
 	VIPSTATUS_ONLINE = 1,
-	VIPSTATUS_PENDING = 2
-};
-
-enum MarketAction_t {
-	MARKETACTION_BUY = 0,
-	MARKETACTION_SELL = 1,
-};
-
-enum MarketRequest_t {
-	MARKETREQUEST_OWN_OFFERS = 0xFFFE,
-	MARKETREQUEST_OWN_HISTORY = 0xFFFF,
-};
-
-enum MarketOfferState_t {
-	OFFERSTATE_ACTIVE = 0,
-	OFFERSTATE_CANCELLED = 1,
-	OFFERSTATE_EXPIRED = 2,
-	OFFERSTATE_ACCEPTED = 3,
-
-	OFFERSTATE_ACCEPTEDEX = 255,
 };
 
 enum ChannelEvent_t : uint8_t {
@@ -124,14 +104,6 @@ enum ChannelEvent_t : uint8_t {
 	CHANNELEVENT_LEAVE = 1,
 	CHANNELEVENT_INVITE = 2,
 	CHANNELEVENT_EXCLUDE = 3,
-};
-
-enum CreatureType_t : uint8_t {
-	CREATURETYPE_PLAYER = 0,
-	CREATURETYPE_MONSTER = 1,
-	CREATURETYPE_NPC = 2,
-	CREATURETYPE_SUMMON_OWN = 3,
-	CREATURETYPE_SUMMON_OTHERS = 4,
 };
 
 enum OperatingSystem_t : uint8_t {
@@ -182,18 +154,15 @@ enum CombatType_t : uint16_t {
 
 	COMBAT_PHYSICALDAMAGE = 1 << 0,
 	COMBAT_ENERGYDAMAGE = 1 << 1,
-	COMBAT_EARTHDAMAGE = 1 << 2,
-	COMBAT_FIREDAMAGE = 1 << 3,
-	COMBAT_UNDEFINEDDAMAGE = 1 << 4,
-	COMBAT_LIFEDRAIN = 1 << 5,
-	COMBAT_MANADRAIN = 1 << 6,
-	COMBAT_HEALING = 1 << 7,
-	COMBAT_DROWNDAMAGE = 1 << 8,
-	COMBAT_ICEDAMAGE = 1 << 9,
-	COMBAT_HOLYDAMAGE = 1 << 10,
-	COMBAT_DEATHDAMAGE = 1 << 11,
+	COMBAT_FIREDAMAGE = 1 << 2,
+	COMBAT_UNDEFINEDDAMAGE = 1 << 3,
+	COMBAT_LIFEDRAIN = 1 << 4,
+	COMBAT_MANADRAIN = 1 << 5,
+	COMBAT_HEALING = 1 << 6,
+	COMBAT_DEATHDAMAGE = 1 << 7,
+	COMBAT_EARTHDAMAGE = 1 << 8,
 
-	COMBAT_COUNT = 12
+	COMBAT_COUNT = 9
 };
 
 enum CombatParam_t {
@@ -264,12 +233,6 @@ enum ConditionParam_t {
 	CONDITION_PARAM_SUBID = 45,
 	CONDITION_PARAM_FIELD = 46,
 	CONDITION_PARAM_DISABLE_DEFENSE = 47,
-	CONDITION_PARAM_SPECIALSKILL_CRITICALHITCHANCE = 48,
-	CONDITION_PARAM_SPECIALSKILL_CRITICALHITAMOUNT = 49,
-	CONDITION_PARAM_SPECIALSKILL_LIFELEECHCHANCE = 50,
-	CONDITION_PARAM_SPECIALSKILL_LIFELEECHAMOUNT = 51,
-	CONDITION_PARAM_SPECIALSKILL_MANALEECHCHANCE = 52,
-	CONDITION_PARAM_SPECIALSKILL_MANALEECHAMOUNT = 53,
 };
 
 enum BlockType_t : uint8_t {
@@ -305,18 +268,6 @@ enum stats_t {
 	STAT_LAST = STAT_MAGICPOINTS
 };
 
-enum SpecialSkills_t {
-	SPECIALSKILL_CRITICALHITCHANCE,
-	SPECIALSKILL_CRITICALHITAMOUNT,
-	SPECIALSKILL_LIFELEECHCHANCE,
-	SPECIALSKILL_LIFELEECHAMOUNT,
-	SPECIALSKILL_MANALEECHCHANCE,
-	SPECIALSKILL_MANALEECHAMOUNT,
-
-	SPECIALSKILL_FIRST = SPECIALSKILL_CRITICALHITCHANCE,
-	SPECIALSKILL_LAST = SPECIALSKILL_MANALEECHAMOUNT
-};
-
 enum formulaType_t {
 	COMBAT_FORMULA_UNDEFINED,
 	COMBAT_FORMULA_LEVELMAGIC,
@@ -330,7 +281,7 @@ enum ConditionType_t {
 	CONDITION_POISON = 1 << 0,
 	CONDITION_FIRE = 1 << 1,
 	CONDITION_ENERGY = 1 << 2,
-	CONDITION_BLEEDING = 1 << 3,
+	CONDITION_MUTED = 1 << 3,
 	CONDITION_HASTE = 1 << 4,
 	CONDITION_PARALYZE = 1 << 5,
 	CONDITION_OUTFIT = 1 << 6,
@@ -342,19 +293,14 @@ enum ConditionType_t {
 	CONDITION_EXHAUST_WEAPON = 1 << 12, // unused
 	CONDITION_REGENERATION = 1 << 13,
 	CONDITION_SOUL = 1 << 14,
-	CONDITION_DROWN = 1 << 15,
-	CONDITION_MUTED = 1 << 16,
-	CONDITION_CHANNELMUTEDTICKS = 1 << 17,
-	CONDITION_YELLTICKS = 1 << 18,
-	CONDITION_ATTRIBUTES = 1 << 19,
-	CONDITION_FREEZING = 1 << 20,
-	CONDITION_DAZZLED = 1 << 21,
-	CONDITION_CURSED = 1 << 22,
-	CONDITION_EXHAUST_COMBAT = 1 << 23, // unused
-	CONDITION_EXHAUST_HEAL = 1 << 24, // unused
-	CONDITION_PACIFIED = 1 << 25,
-	CONDITION_SPELLCOOLDOWN = 1 << 26,
-	CONDITION_SPELLGROUPCOOLDOWN = 1 << 27,
+	CONDITION_CHANNELMUTEDTICKS = 1 << 15,
+	CONDITION_YELLTICKS = 1 << 16,
+	CONDITION_ATTRIBUTES = 1 << 17,
+	CONDITION_EXHAUST_COMBAT = 1 << 18, // unused
+	CONDITION_EXHAUST_HEAL = 1 << 19, // unused
+	CONDITION_PACIFIED = 1 << 20,
+	CONDITION_SPELLCOOLDOWN = 1 << 21,
+	CONDITION_SPELLGROUPCOOLDOWN = 1 << 22,
 };
 
 enum ConditionId_t : int8_t {
@@ -457,15 +403,6 @@ enum ReturnValue {
 	RETURNVALUE_YOUCANNOTTRADETHISHOUSE,
 };
 
-enum SpeechBubble_t
-{
-	SPEECHBUBBLE_NONE = 0,
-	SPEECHBUBBLE_NORMAL = 1,
-	SPEECHBUBBLE_TRADE = 2,
-	SPEECHBUBBLE_QUEST = 3,
-	SPEECHBUBBLE_QUESTTRADER = 4,
-};
-
 enum MapMark_t
 {
 	MAPMARK_TICK = 0,
@@ -493,12 +430,10 @@ enum MapMark_t
 struct Outfit_t {
 	uint16_t lookType = 0;
 	uint16_t lookTypeEx = 0;
-	uint16_t lookMount = 0;
 	uint8_t lookHead = 0;
 	uint8_t lookBody = 0;
 	uint8_t lookLegs = 0;
 	uint8_t lookFeet = 0;
-	uint8_t lookAddons = 0;
 };
 
 struct LightInfo {
@@ -506,85 +441,6 @@ struct LightInfo {
 	uint8_t color = 0;
 	constexpr LightInfo() = default;
 	constexpr LightInfo(uint8_t level, uint8_t color) : level(level), color(color) {}
-};
-
-struct ShopInfo {
-	uint16_t itemId;
-	int32_t subType;
-	uint32_t buyPrice;
-	uint32_t sellPrice;
-	std::string realName;
-
-	ShopInfo() {
-		itemId = 0;
-		subType = 1;
-		buyPrice = 0;
-		sellPrice = 0;
-	}
-
-	ShopInfo(uint16_t itemId, int32_t subType = 0, uint32_t buyPrice = 0, uint32_t sellPrice = 0, std::string realName = "")
-		: itemId(itemId), subType(subType), buyPrice(buyPrice), sellPrice(sellPrice), realName(std::move(realName)) {}
-};
-
-struct MarketOffer {
-	uint32_t price;
-	uint32_t timestamp;
-	uint16_t amount;
-	uint16_t counter;
-	uint16_t itemId;
-	std::string playerName;
-};
-
-struct MarketOfferEx {
-	MarketOfferEx() = default;
-	MarketOfferEx(MarketOfferEx&& other) :
-		id(other.id), playerId(other.playerId), timestamp(other.timestamp), price(other.price),
-		amount(other.amount), counter(other.counter), itemId(other.itemId), type(other.type),
-		playerName(std::move(other.playerName)) {}
-
-	uint32_t id;
-	uint32_t playerId;
-	uint32_t timestamp;
-	uint32_t price;
-	uint16_t amount;
-	uint16_t counter;
-	uint16_t itemId;
-	MarketAction_t type;
-	std::string playerName;
-};
-
-struct HistoryMarketOffer {
-	uint32_t timestamp;
-	uint32_t price;
-	uint16_t itemId;
-	uint16_t amount;
-	MarketOfferState_t state;
-};
-
-struct MarketStatistics {
-	MarketStatistics() {
-		numTransactions = 0;
-		highestPrice = 0;
-		totalPrice = 0;
-		lowestPrice = 0;
-	}
-
-	uint32_t numTransactions;
-	uint32_t highestPrice;
-	uint64_t totalPrice;
-	uint32_t lowestPrice;
-};
-
-struct ModalWindow
-{
-	std::list<std::pair<std::string, uint8_t>> buttons, choices;
-	std::string title, message;
-	uint32_t id;
-	uint8_t defaultEnterButton, defaultEscapeButton;
-	bool priority;
-
-	ModalWindow(uint32_t id, std::string title, std::string message)
-		: title(std::move(title)), message(std::move(message)), id(id), defaultEnterButton(0xFF), defaultEscapeButton(0xFF), priority(false) {}
 };
 
 enum CombatOrigin
@@ -611,10 +467,6 @@ struct CombatDamage
 		primary.value = secondary.value = 0;
 	}
 };
-
-using MarketOfferList = std::list<MarketOffer>;
-using HistoryMarketOfferList = std::list<HistoryMarketOffer>;
-using ShopInfoList = std::list<ShopInfo>;
 
 enum MonstersEvent_t : uint8_t {
 	MONSTERS_EVENT_NONE = 0,

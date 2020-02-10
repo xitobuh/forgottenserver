@@ -1,7 +1,3 @@
-function Player:onBrowseField(position)
-	return true
-end
-
 function Player:onLook(thing, position, distance)
 	local description = "You see " .. thing:getDescription(distance)
 	if self:getGroup():getAccess() then
@@ -79,10 +75,6 @@ end
 
 function Player:onLookInTrade(partner, item, distance)
 	self:sendTextMessage(MESSAGE_INFO_DESCR, "You see " .. item:getDescription(distance))
-end
-
-function Player:onLookInShop(itemType, count)
-	return true
 end
 
 function Player:onMoveItem(item, count, fromPosition, toPosition, fromCylinder, toCylinder)

@@ -215,10 +215,6 @@
 	<movevent event="StepOut" itemid="20290" script="closingdoor.lua" />
 	<movevent event="StepIn" itemid="20290" script="quest_door.lua" />
 
-	<!-- Snow footprint tiles -->
-	<movevent event="StepOut" itemid="670" script="snow.lua" />
-	<movevent event="StepOut" fromid="6580" toid="6593" script="snow.lua" />
-
 	<!-- Create bread movements -->
 	<movevent event="AddItem" tileitem="1" itemid="1786" script="dough.lua" />
 	<movevent event="AddItem" tileitem="1" itemid="1788" script="dough.lua" />
@@ -278,14 +274,6 @@
 	<movevent event="AddItem" itemid="1507" function="onAddField" />
 	<movevent event="StepIn" itemid="7359" function="onStepInField" />
 	<movevent event="AddItem" itemid="7360" function="onAddField" />
-
-	<!-- Swimming -->
-	<movevent event="StepIn" fromid="4620" toid="4625" script="swimming.lua" />
-	<movevent event="StepOut" fromid="4620" toid="4625" script="swimming.lua" />
-	<movevent event="StepIn" fromid="4820" toid="4825" script="swimming.lua" />
-	<movevent event="StepOut" fromid="4820" toid="4825" script="swimming.lua" />
-	<movevent event="StepIn" itemid="5405" script="drowning.lua" />
-	<movevent event="StepOut" itemid="5405" script="drowning.lua" />
 
 	<!-- Boots -->
 	<movevent event="Equip" itemid="2195" slot="feet" function="onEquipItem" />

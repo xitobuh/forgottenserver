@@ -3,9 +3,7 @@
 	<group id="1" name="player" access="0" maxdepotitems="0" maxvipentries="0" />
 	<group id="2" name="gamemaster" access="1" maxdepotitems="0" maxvipentries="200" >
 		<flags>
-			<flag cannotusecombat="1" />
 			<flag cannotattackplayer="1" />
-			<flag cannotattackmonster="1" />
 			<flag cannotbeattacked="1" />
 			<flag canconvinceall="1" />
 			<flag cansummonall="1" />
@@ -40,9 +38,7 @@
 	</group>
 	<group id="3" name="god" access="1" maxdepotitems="0" maxvipentries="200" >
 		<flags>
-			<flag cannotusecombat="1" />
 			<flag cannotattackplayer="1" />
-			<flag cannotattackmonster="1" />
 			<flag cannotbeattacked="1" />
 			<flag canconvinceall="1" />
 			<flag cansummonall="1" />
