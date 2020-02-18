@@ -30,15 +30,25 @@ Account IOLoginData::loadAccount(uint32_t accno)
 {
 	Account account;
 
+	Database& db = Database::getInstance();
+	std::string credentialType = "number";
+
 	std::ostringstream query;
-	query << "SELECT `id`, `number`, `password`, `type`, `premdays`, `lastday` FROM `accounts` WHERE `id` = " << accno;
-	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
+	query << "SHOW COLUMNS FROM `accounts` LIKE 'name'";
+	DBResult_ptr result = db.storeQuery(query.str());
+	if (result) {
+		credentialType = "name";
+	}
+
+	query.str(std::string());
+	query << "SELECT `id`, " << db.escapeString(credentialType) << ", `password`, `type`, `premdays`, `lastday` FROM `accounts` WHERE `id` = " << accno;
+	result = db.storeQuery(query.str());
 	if (!result) {
 		return account;
 	}
 
 	account.id = result->getNumber<uint32_t>("id");
-	account.number = result->getNumber<uint32_t>("number");
+	account.number = result->getNumber<uint32_t>(credentialType);
 	account.accountType = static_cast<AccountType_t>(result->getNumber<int32_t>("type"));
 	account.premiumDays = result->getNumber<uint16_t>("premdays");
 	account.lastDay = result->getNumber<time_t>("lastday");
@@ -84,10 +94,19 @@ std::string decodeSecret(const std::string& secret)
 bool IOLoginData::loginserverAuthentication(uint32_t accountNumber, const std::string& password, Account& account)
 {
 	Database& db = Database::getInstance();
-
 	std::ostringstream query;
-	query << "SELECT `id`, `number`, `password`, `type`, `premdays`, `lastday` FROM `accounts` WHERE `number` = " << accountNumber;
+
+	std::string credentialType = "number";
+
+	query << "SHOW COLUMNS FROM `accounts` LIKE 'name'";
 	DBResult_ptr result = db.storeQuery(query.str());
+	if (result) {
+		credentialType = "name";
+	}
+
+	query.str(std::string());
+	query << "SELECT `id`, " << db.escapeString(credentialType) << ", `password`, `type`, `premdays`, `lastday` FROM `accounts` WHERE " << credentialType << " = " << accountNumber;
+	result = db.storeQuery(query.str());
 	if (!result) {
 		return false;
 	}
@@ -97,7 +116,7 @@ bool IOLoginData::loginserverAuthentication(uint32_t accountNumber, const std::s
 	}
 
 	account.id = result->getNumber<uint32_t>("id");
-	account.number = result->getNumber<uint32_t>("number");
+	account.number = result->getNumber<uint32_t>(credentialType);
 	account.accountType = static_cast<AccountType_t>(result->getNumber<int32_t>("type"));
 	account.premiumDays = result->getNumber<uint16_t>("premdays");
 	account.lastDay = result->getNumber<time_t>("lastday");
@@ -121,8 +140,16 @@ uint32_t IOLoginData::gameworldAuthentication(uint32_t accountNumber, const std:
 	Database& db = Database::getInstance();
 
 	std::ostringstream query;
-	query << "SELECT `id`, `password` FROM `accounts` WHERE `number` = " << accountNumber;
+	std::string credentialType = "number";
+	query << "SHOW COLUMNS FROM `accounts` LIKE 'name'";
 	DBResult_ptr result = db.storeQuery(query.str());
+	if (result) {
+		credentialType = "name";
+	}
+
+	query.str(std::string());
+	query << "SELECT `id`, `password` FROM `accounts` WHERE " << credentialType << " = " << accountNumber;
+	result = db.storeQuery(query.str());
 	if (!result) {
 		return 0;
 	}
@@ -143,6 +170,7 @@ uint32_t IOLoginData::gameworldAuthentication(uint32_t accountNumber, const std:
 	if (result->getNumber<uint32_t>("account_id") != accountId || result->getNumber<uint64_t>("deletion") != 0) {
 		return 0;
 	}
+
 	characterName = result->getString("name");
 	return accountId;
 }

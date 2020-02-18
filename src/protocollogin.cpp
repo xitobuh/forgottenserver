@@ -47,7 +47,7 @@ void ProtocolLogin::getCharacterList(uint32_t accountNumber, const std::string& 
 {
 	Account account;
 	if (!IOLoginData::loginserverAuthentication(accountNumber, password, account)) {
-		disconnectClient("Account name or password is not correct.", version);
+		disconnectClient("Account number or password is not correct.", version);
 		return;
 	}
 

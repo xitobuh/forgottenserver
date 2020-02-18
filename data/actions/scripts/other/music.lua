@@ -27,10 +27,6 @@ local instruments = {
 	[3952] = {effects = {failure = CONST_ME_POFF, success = CONST_ME_SOUND_GREEN}, chance = 20}, -- didgeridoo
 	[3953] = {effect = CONST_ME_SOUND_RED}, -- war drum
 	[3957] = {effect = CONST_ME_SOUND_YELLOW, itemId = 2681, itemCount = 10, chance = 80, remove = true}, -- cornucopia
-	[5786] = {effects = {failure = CONST_ME_SOUND_RED, success = CONST_ME_SOUND_YELLOW}, monster = "war wolf", chance = 60, remove = true}, -- wooden whistle
-	[6572] = {effect = CONST_ME_SOUND_GREEN, text = "TOOOOOOT", transformId = 13578, decayId = 6572}, -- party trumpet
-	[6573] = {effect = CONST_ME_SOUND_GREEN, text = "TOOOOOOT", transformId = 13578, decayId = 6573}, -- party trumpet
-	[13759] = {effect = CONST_ME_SOUND_BLUE} -- small whistle (actual effect is unknown)
 }
 
 function onUse(player, item, fromPosition, target, toPosition, isHotkey)
