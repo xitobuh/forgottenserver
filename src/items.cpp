@@ -292,7 +292,6 @@ bool Items::loadFromOtb(const std::string& file)
 		uint16_t serverId = 0;
 		uint16_t clientId = 0;
 		uint16_t speed = 0;
-		uint16_t wareId = 0;
 		uint8_t lightLevel = 0;
 		uint8_t lightColor = 0;
 		uint8_t alwaysOnTopOrder = 0;
@@ -368,17 +367,6 @@ bool Items::loadFromOtb(const std::string& file)
 					break;
 				}
 
-				case ITEM_ATTR_WAREID: {
-					if (datalen != sizeof(uint16_t)) {
-						return false;
-					}
-
-					if (!stream.read<uint16_t>(wareId)) {
-						return false;
-					}
-					break;
-				}
-
 				default: {
 					//skip unknown attributes
 					if (!stream.skip(datalen)) {
@@ -442,7 +430,7 @@ bool Items::loadFromOtb(const std::string& file)
 		iType.rotatable = hasBitSet(FLAG_ROTATABLE, flags);
 		iType.canReadText = hasBitSet(FLAG_READABLE, flags);
 		iType.lookThrough = hasBitSet(FLAG_LOOKTHROUGH, flags);
-		iType.isAnimation = hasBitSet(FLAG_ANIMATION, flags);
+		// iType.isAnimation = hasBitSet(FLAG_ANIMATION, flags);
 		// iType.walkStack = !hasBitSet(FLAG_FULLTILE, flags);
 		iType.forceUse = hasBitSet(FLAG_FORCEUSE, flags);
 
@@ -451,7 +439,6 @@ bool Items::loadFromOtb(const std::string& file)
 		iType.speed = speed;
 		iType.lightLevel = lightLevel;
 		iType.lightColor = lightColor;
-		iType.wareId = wareId;
 		iType.alwaysOnTopOrder = alwaysOnTopOrder;
 	}
 
