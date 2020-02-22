@@ -1484,7 +1484,7 @@ void Tile::setTileFlags(const Item* item)
 		setFlag(TILESTATE_SUPPORTS_HANGABLE);
 	}
 
-	if (item->hasProperty(CONST_PROP_HASHEIGHT)) {
+	if (item->hasProperty(CONST_PROP_HASHEIGHT) && height < 3) {
 		height++;
 	}
 }
@@ -1549,7 +1549,7 @@ void Tile::resetTileFlags(const Item* item)
 		resetFlag(TILESTATE_SUPPORTS_HANGABLE);
 	}
 
-	if (item->hasProperty(CONST_PROP_HASHEIGHT)) {
+	if (item->hasProperty(CONST_PROP_HASHEIGHT) && height > 0) {
 		height--;
 	}
 }
