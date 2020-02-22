@@ -204,6 +204,14 @@ class Tile : public Cylinder
 
 		bool hasProperty(ITEMPROPERTY prop) const;
 		bool hasProperty(const Item* exclude, ITEMPROPERTY prop) const;
+		uint32_t getHeight() const
+		{
+			return height;
+		}
+		bool hasHeight(uint32_t n) const
+		{
+			return height == n;
+		}
 
 		bool hasFlag(uint32_t flag) const {
 			return hasBitSet(flag, this->flags);
@@ -226,9 +234,6 @@ class Tile : public Cylinder
 				return ZONE_NORMAL;
 			}
 		}
-
-		uint32_t getHeight() const;
-		bool hasHeight(uint32_t n) const;
 
 		std::string getDescription(int32_t lookDistance) const override final;
 
@@ -283,6 +288,7 @@ class Tile : public Cylinder
 			ground = item;
 		}
 
+
 	private:
 		void onAddTileItem(Item* item);
 		void onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newItem, const ItemType& newType);
@@ -295,6 +301,7 @@ class Tile : public Cylinder
 		Item* ground = nullptr;
 		Position tilePos;
 		uint32_t flags = 0;
+		uint32_t height = 0;
 };
 
 // Used for walkable tiles, where there is high likeliness of

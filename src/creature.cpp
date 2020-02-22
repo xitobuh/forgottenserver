@@ -450,9 +450,6 @@ void Creature::onCreatureMove(Creature* creature, const Tile* newTile, const Pos
 	if (creature == this) {
 		lastStep = OTSYS_TIME();
 		lastStepCost = 1;
-		if (Player* player = getPlayer()) {
-			player->setCurrentTileHeight(newTile->getHeight());
-		}
 
 		if (!teleport) {
 			if (oldPos.z != newPos.z) {

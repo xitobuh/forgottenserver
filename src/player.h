@@ -936,13 +936,6 @@ class Player final : public Creature, public Cylinder
 		void forgetInstantSpell(const std::string& spellName);
 		bool hasLearnedInstantSpell(const std::string& spellName) const;
 
-		uint16_t getCurrentTileHeight() const {
-			return currentTileHeight;
-		}
-		void setCurrentTileHeight(uint16_t height) {
-			currentTileHeight = height;
-		}
-
 	private:
 		std::forward_list<Condition*> getMuteConditions() const;
 
@@ -1073,7 +1066,6 @@ class Player final : public Creature, public Cylinder
 
 		uint16_t staminaMinutes = 2520;
 		uint16_t maxWriteLen = 0;
-		uint16_t currentTileHeight = 0;
 		int16_t lastDepotId = -1;
 
 		uint8_t soul = 0;

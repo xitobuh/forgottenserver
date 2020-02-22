@@ -1010,9 +1010,6 @@ void Game::playerMoveItem(Player* player, const Position& fromPos,
 		player->sendCancelMessage(ret);
 	} else {
 		g_events->eventPlayerOnItemMoved(player, item, count, fromPos, toPos, fromCylinder, toCylinder);
-		if (toPos == playerPos) {
-			player->setCurrentTileHeight(player->getTile()->getHeight());
-		}
 	}
 }
 
@@ -3619,7 +3616,7 @@ bool Game::combatChangeHealth(Creature* attacker, Creature* target, CombatDamage
 
 			for (Creature* spectator : spectators) {
 				Player* tmpPlayer = spectator->getPlayer();
-				if (tmpPlayer->getPosition().z != targetPos.z) {
+				if (!tmpPlayer || (tmpPlayer && tmpPlayer->getPosition().z != targetPos.z)) {
 					continue;
 				}
 
