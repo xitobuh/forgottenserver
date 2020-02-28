@@ -91,7 +91,7 @@ void Mailbox::postRemoveNotification(Thing* thing, const Cylinder* newParent, in
 bool Mailbox::sendItem(Item* item) const
 {
 	std::string receiver;
-	uint32_t depotId = 0;
+	uint32_t depotId;
 	if (!getReceiver(item, receiver, depotId)) {
 		return false;
 	}
@@ -152,9 +152,10 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& depotId) cons
 
 	trimString(name);
 	Town* town = g_game.map.towns.getTown(townName);
-	if (town) {
-		depotId = town->getID();
+	if (!town) {
+		return false;
 	}
+	depotId = town->getID();
 
 	return true;
 }
