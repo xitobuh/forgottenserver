@@ -267,11 +267,6 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 	msg.skipBytes(1); // gamemaster flag
 
 	uint32_t accountNumber = msg.get<uint32_t>();
-	if (accountNumber == 0) {
-		disconnectClient("You must enter your account number.");
-		return;
-	}
-
 	std::string characterName = msg.getString();
 	std::string password = msg.getString();
 

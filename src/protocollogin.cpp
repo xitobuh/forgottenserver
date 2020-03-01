@@ -32,7 +32,7 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-void ProtocolLogin::disconnectClient(const std::string& message, uint16_t)
+void ProtocolLogin::disconnectClient(const std::string& message)
 {
 	auto output = OutputMessagePool::getOutputMessage();
 
@@ -43,11 +43,11 @@ void ProtocolLogin::disconnectClient(const std::string& message, uint16_t)
 	disconnect();
 }
 
-void ProtocolLogin::getCharacterList(uint32_t accountNumber, const std::string& password, uint16_t version)
+void ProtocolLogin::getCharacterList(uint32_t accountNumber, const std::string& password)
 {
 	Account account;
 	if (!IOLoginData::loginserverAuthentication(accountNumber, password, account)) {
-		disconnectClient("Account number or password is not correct.", version);
+		disconnectClient("Account number or password is not correct.");
 		return;
 	}
 
@@ -109,7 +109,7 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 	if (version < 760) {
 		std::ostringstream ss;
 		ss << "Only clients with protocol " << CLIENT_VERSION_STR << " allowed!";
-		disconnectClient(ss.str(), version);
+		disconnectClient(ss.str());
 		return;
 	}
 
@@ -129,17 +129,17 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 	if (version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX) {
 		std::ostringstream ss;
 		ss << "Only clients with protocol " << CLIENT_VERSION_STR << " allowed!";
-		disconnectClient(ss.str(), version);
+		disconnectClient(ss.str());
 		return;
 	}
 
 	if (g_game.getGameState() == GAME_STATE_STARTUP) {
-		disconnectClient("Gameworld is starting up. Please wait.", version);
+		disconnectClient("Gameworld is starting up. Please wait.");
 		return;
 	}
 
 	if (g_game.getGameState() == GAME_STATE_MAINTAIN) {
-		disconnectClient("Gameworld is under maintenance.\nPlease re-connect in a while.", version);
+		disconnectClient("Gameworld is under maintenance.\nPlease re-connect in a while.");
 		return;
 	}
 
@@ -156,22 +156,13 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 
 		std::ostringstream ss;
 		ss << "Your IP has been banned until " << formatDateShort(banInfo.expiresAt) << " by " << banInfo.bannedBy << ".\n\nReason specified:\n" << banInfo.reason;
-		disconnectClient(ss.str(), version);
+		disconnectClient(ss.str());
 		return;
 	}
 
 	uint32_t accountNumber = msg.get<uint32_t>();
-	if (accountNumber == 0) {
-		disconnectClient("Invalid account number.", version);
-		return;
-	}
-
 	std::string password = msg.getString();
-	if (password.empty()) {
-		disconnectClient("Invalid password.", version);
-		return;
-	}
 
 	auto thisPtr = std::static_pointer_cast<ProtocolLogin>(shared_from_this());
-	g_dispatcher.addTask(createTask(std::bind(&ProtocolLogin::getCharacterList, thisPtr, accountNumber, password, version)));
+	g_dispatcher.addTask(createTask(std::bind(&ProtocolLogin::getCharacterList, thisPtr, accountNumber, password)));
 }

@@ -40,9 +40,9 @@ class ProtocolLogin : public Protocol
 		void onRecvFirstMessage(NetworkMessage& msg) override;
 
 	private:
-		void disconnectClient(const std::string& message, uint16_t version);
+		void disconnectClient(const std::string& message);
 
-		void getCharacterList(uint32_t accountNumber, const std::string& password, uint16_t version);
+		void getCharacterList(uint32_t accountNumber, const std::string& password);
 };
 
 #endif
