@@ -1162,7 +1162,6 @@ void LuaScriptInterface::registerFunctions()
 	registerEnum(CONDITION_EXHAUST_HEAL)
 	registerEnum(CONDITION_PACIFIED)
 	registerEnum(CONDITION_SPELLCOOLDOWN)
-	registerEnum(CONDITION_SPELLGROUPCOOLDOWN)
 
 	registerEnum(CONDITIONID_DEFAULT)
 	registerEnum(CONDITIONID_COMBAT)
@@ -1833,6 +1832,8 @@ void LuaScriptInterface::registerFunctions()
 	registerMethod("Game", "getClientVersion", LuaScriptInterface::luaGameGetClientVersion);
 
 	registerMethod("Game", "reload", LuaScriptInterface::luaGameReload);
+
+	registerMethod("Game", "getInstantSpell", LuaScriptInterface::luaGameGetInstantSpell);
 
 	// Variant
 	registerClass("Variant", "", LuaScriptInterface::luaVariantCreate);
@@ -2605,7 +2606,6 @@ void LuaScriptInterface::registerFunctions()
 	registerMethod("Spell", "id", LuaScriptInterface::luaSpellId);
 	registerMethod("Spell", "group", LuaScriptInterface::luaSpellGroup);
 	registerMethod("Spell", "cooldown", LuaScriptInterface::luaSpellCooldown);
-	registerMethod("Spell", "groupCooldown", LuaScriptInterface::luaSpellGroupCooldown);
 	registerMethod("Spell", "level", LuaScriptInterface::luaSpellLevel);
 	registerMethod("Spell", "magicLevel", LuaScriptInterface::luaSpellMagicLevel);
 	registerMethod("Spell", "mana", LuaScriptInterface::luaSpellMana);
@@ -4393,6 +4393,24 @@ int LuaScriptInterface::luaGameReload(lua_State* L)
 		pushBoolean(L, g_game.reload(reloadType));
 	}
 	lua_gc(g_luaEnvironment.getLuaState(), LUA_GCCOLLECT, 0);
+	return 1;
+}
+
+int LuaScriptInterface::luaGameGetInstantSpell(lua_State* L)
+{
+	// Game.getInstantSpell(name or words)
+	const std::string& pattern = getString(L, 1);
+	InstantSpell* spell = g_spells->getInstantSpellByName(pattern);
+	if (!spell) {
+		spell = g_spells->getInstantSpell(pattern);
+		if (!spell) {
+			reportErrorFunc("Spell \"" + pattern + "\" not found");
+			lua_pushnil(L);
+			return 1;
+		}
+	}
+
+	pushInstantSpell(L, *spell);
 	return 1;
 }
 
@@ -11530,7 +11548,7 @@ int LuaScriptInterface::luaConditionSetFormula(lua_State* L)
 int LuaScriptInterface::luaConditionSetOutfit(lua_State* L)
 {
 	// condition:setOutfit(outfit)
-	// condition:setOutfit(lookTypeEx, lookType, lookHead, lookBody, lookLegs, lookFeet[, lookMount]])
+	// condition:setOutfit(lookTypeEx, lookType, lookHead, lookBody, lookLegs, lookFeet)
 	Outfit_t outfit;
 	if (isTable(L, 2)) {
 		outfit = getOutfit(L, 2);
@@ -13329,12 +13347,11 @@ int LuaScriptInterface::luaSpellId(lua_State* L)
 
 int LuaScriptInterface::luaSpellGroup(lua_State* L)
 {
-	// spell:group(primaryGroup[, secondaryGroup])
+	// spell:group(primaryGroup)
 	Spell* spell = getUserdata<Spell>(L, 1);
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			lua_pushnumber(L, spell->getGroup());
-			lua_pushnumber(L, spell->getSecondaryGroup());
 			return 2;
 		} else if (lua_gettop(L) == 2) {
 			SpellGroup_t group = getNumber<SpellGroup_t>(L, 2);
@@ -13358,10 +13375,8 @@ int LuaScriptInterface::luaSpellGroup(lua_State* L)
 			}
 		} else {
 			SpellGroup_t primaryGroup = getNumber<SpellGroup_t>(L, 2);
-			SpellGroup_t secondaryGroup = getNumber<SpellGroup_t>(L, 2);
-			if (primaryGroup && secondaryGroup) {
+			if (primaryGroup) {
 				spell->setGroup(primaryGroup);
-				spell->setSecondaryGroup(secondaryGroup);
 				pushBoolean(L, true);
 			} else if (isString(L, 2) && isString(L, 3)) {
 				primaryGroup = stringToSpellGroup(getString(L, 2));
@@ -13372,17 +13387,9 @@ int LuaScriptInterface::luaSpellGroup(lua_State* L)
 					pushBoolean(L, false);
 					return 1;
 				}
-				secondaryGroup = stringToSpellGroup(getString(L, 3));
-				if (secondaryGroup != SPELLGROUP_NONE) {
-					spell->setSecondaryGroup(secondaryGroup);
-				} else {
-					std::cout << "[Warning - Spell::group] Unknown secondaryGroup: " << getString(L, 3) << std::endl;
-					pushBoolean(L, false);
-					return 1;
-				}
 				pushBoolean(L, true);
 			} else {
-				std::cout << "[Warning - Spell::group] Unknown primaryGroup: " << getString(L, 2) << " or secondaryGroup: " << getString(L, 3) << std::endl;
+				std::cout << "[Warning - Spell::group] Unknown primaryGroup: " << getString(L, 2) << std::endl;
 				pushBoolean(L, false);
 				return 1;
 			}
@@ -13402,29 +13409,6 @@ int LuaScriptInterface::luaSpellCooldown(lua_State* L)
 			lua_pushnumber(L, spell->getCooldown());
 		} else {
 			spell->setCooldown(getNumber<uint32_t>(L, 2));
-			pushBoolean(L, true);
-		}
-	} else {
-		lua_pushnil(L);
-	}
-	return 1;
-}
-
-int LuaScriptInterface::luaSpellGroupCooldown(lua_State* L)
-{
-	// spell:groupCooldown(primaryGroupCd[, secondaryGroupCd])
-	Spell* spell = getUserdata<Spell>(L, 1);
-	if (spell) {
-		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, spell->getGroupCooldown());
-			lua_pushnumber(L, spell->getSecondaryCooldown());
-			return 2;
-		} else if (lua_gettop(L) == 2) {
-			spell->setGroupCooldown(getNumber<uint32_t>(L, 2));
-			pushBoolean(L, true);
-		} else {
-			spell->setGroupCooldown(getNumber<uint32_t>(L, 2));
-			spell->setSecondaryCooldown(getNumber<uint32_t>(L, 3));
 			pushBoolean(L, true);
 		}
 	} else {

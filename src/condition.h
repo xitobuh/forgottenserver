@@ -403,18 +403,4 @@ class ConditionSpellCooldown final : public ConditionGeneric
 		}
 };
 
-class ConditionSpellGroupCooldown final : public ConditionGeneric
-{
-	public:
-		ConditionSpellGroupCooldown(ConditionId_t id, ConditionType_t type, int32_t ticks, bool buff = false, uint32_t subId = 0) :
-			ConditionGeneric(id, type, ticks, buff, subId) {}
-
-		bool startCondition(Creature* creature) override;
-		void addCondition(Creature* creature, const Condition* condition) override;
-
-		ConditionSpellGroupCooldown* clone() const override {
-			return new ConditionSpellGroupCooldown(*this);
-		}
-};
-
 #endif

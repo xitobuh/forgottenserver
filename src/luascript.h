@@ -564,6 +564,8 @@ class LuaScriptInterface
 
 		static int luaGameReload(lua_State* L);
 
+		static int luaGameGetInstantSpell(lua_State* L);
+
 		// Variant
 		static int luaVariantCreate(lua_State* L);
 
@@ -1303,7 +1305,6 @@ class LuaScriptInterface
 		static int luaSpellId(lua_State* L);
 		static int luaSpellGroup(lua_State* L);
 		static int luaSpellCooldown(lua_State* L);
-		static int luaSpellGroupCooldown(lua_State* L);
 		static int luaSpellLevel(lua_State* L);
 		static int luaSpellMagicLevel(lua_State* L);
 		static int luaSpellMana(lua_State* L);

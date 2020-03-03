@@ -459,31 +459,6 @@ bool Spell::configureSpell(const pugi::xml_node& node)
 		}
 	}
 
-	if ((attr = node.attribute("groupcooldown"))) {
-		groupCooldown = pugi::cast<uint32_t>(attr.value());
-	}
-
-	if ((attr = node.attribute("secondarygroup"))) {
-		std::string tmpStr = asLowerCaseString(attr.as_string());
-		if (tmpStr == "none" || tmpStr == "0") {
-			secondaryGroup = SPELLGROUP_NONE;
-		} else if (tmpStr == "attack" || tmpStr == "1") {
-			secondaryGroup = SPELLGROUP_ATTACK;
-		} else if (tmpStr == "healing" || tmpStr == "2") {
-			secondaryGroup = SPELLGROUP_HEALING;
-		} else if (tmpStr == "support" || tmpStr == "3") {
-			secondaryGroup = SPELLGROUP_SUPPORT;
-		} else if (tmpStr == "special" || tmpStr == "4") {
-			secondaryGroup = SPELLGROUP_SPECIAL;
-		} else {
-			std::cout << "[Warning - Spell::configureSpell] Unknown secondarygroup: " << attr.as_string() << std::endl;
-		}
-	}
-
-	if ((attr = node.attribute("secondarygroupcooldown"))) {
-		secondaryGroupCooldown = pugi::cast<uint32_t>(attr.value());
-	}
-
 	if ((attr = node.attribute("level")) || (attr = node.attribute("lvl"))) {
 		level = pugi::cast<uint32_t>(attr.value());
 	}
@@ -604,7 +579,7 @@ bool Spell::playerSpellCheck(Player* player) const
 		return false;
 	}
 
-	if (player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, group) || player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId) || (secondaryGroup != SPELLGROUP_NONE && player->hasCondition(CONDITION_SPELLGROUPCOOLDOWN, secondaryGroup))) {
+	if (player->hasCondition(CONDITION_SPELLCOOLDOWN, spellId)) {
 		player->sendCancelMessage(RETURNVALUE_YOUAREEXHAUSTED);
 
 		if (isInstant()) {
@@ -796,16 +771,6 @@ void Spell::postCastSpell(Player* player, bool finishedCast /*= true*/, bool pay
 				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, cooldown, 0, false, spellId);
 				player->addCondition(condition);
 			}
-
-			if (groupCooldown > 0) {
-				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, groupCooldown, 0, false, group);
-				player->addCondition(condition);
-			}
-
-			if (secondaryGroupCooldown > 0) {
-				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, secondaryGroupCooldown, 0, false, secondaryGroup);
-				player->addCondition(condition);
-			}
 		}
 
 		if (aggressive) {
@@ -916,16 +881,6 @@ bool InstantSpell::playerCastInstant(Player* player, std::string& param)
 						player->addCondition(condition);
 					}
 
-					if (groupCooldown > 0) {
-						Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, groupCooldown, 0, false, group);
-						player->addCondition(condition);
-					}
-
-					if (secondaryGroupCooldown > 0) {
-						Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, secondaryGroupCooldown, 0, false, secondaryGroup);
-						player->addCondition(condition);
-					}
-
 					player->sendCancelMessage(ret);
 					g_game.addMagicEffect(player->getPosition(), CONST_ME_POFF);
 					return false;
@@ -977,16 +932,6 @@ bool InstantSpell::playerCastInstant(Player* player, std::string& param)
 			if (ret != RETURNVALUE_NOERROR) {
 				if (cooldown > 0) {
 					Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, cooldown, 0, false, spellId);
-					player->addCondition(condition);
-				}
-
-				if (groupCooldown > 0) {
-					Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, groupCooldown, 0, false, group);
-					player->addCondition(condition);
-				}
-
-				if (secondaryGroupCooldown > 0) {
-					Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, secondaryGroupCooldown, 0, false, secondaryGroup);
 					player->addCondition(condition);
 				}
 
@@ -1280,5 +1225,5 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 	LuaScriptInterface::pushVariant(L, var);
 
-	return scriptInterface->callFunction(3);
+	return scriptInterface->callFunction(2);
 }
