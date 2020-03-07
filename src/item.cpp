@@ -844,7 +844,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	}
 
 	if (it.isRune()) {
-		if (RuneSpell* rune = g_spells->getRuneSpell(it.id)) {
+		if (g_spells->getRuneSpell(it.id)) {
 			if (it.runeMagLevel > 0) {
 				s << " for magic level " << it.runeMagLevel;
 			}
