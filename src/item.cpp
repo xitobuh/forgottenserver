@@ -850,7 +850,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			}
 
 			if (!it.runeSpellName.empty()) {
-				s << ". It's an \"" << it.runeSpellName << "\" spell (" << it.charges << "x)";
+				s << ". It's an \"" << it.runeSpellName << "\" spell (" << (item ? item->getCharges() : it.charges) << "x)";
 			}
 		}
 	} else if (it.weaponType != WEAPON_NONE) {
