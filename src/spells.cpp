@@ -574,7 +574,7 @@ bool Spell::playerSpellCheck(Player* player) const
 		return false;
 	}
 
-  if (aggressive && !player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION) {
+	if (aggressive && !player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION) {
 		player->sendCancelMessage(RETURNVALUE_ACTIONNOTPERMITTEDINPROTECTIONZONE);
 		return false;
 	}
@@ -1171,6 +1171,12 @@ bool RuneSpell::executeUse(Player* player, Item* item, const Position&, Thing* t
 	}
 
 	postCastSpell(player);
+
+	target = g_game.getCreatureByID(var.number);
+	if (target && getAggressive()) {
+		player->onAttackedCreature(target->getCreature(), false);
+	}
+
 	if (hasCharges && item && g_config.getBoolean(ConfigManager::REMOVE_RUNE_CHARGES)) {
 		int32_t newCount = std::max<int32_t>(0, item->getSubType() - 1);
 		g_game.transformItem(item, item->getID(), newCount);
