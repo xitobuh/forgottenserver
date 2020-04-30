@@ -94,6 +94,7 @@ bool Npc::load()
 void Npc::reset()
 {
 	loaded = false;
+	isIdle = true;
 	walkTicks = 1500;
 	pushable = true;
 	floorChange = false;
