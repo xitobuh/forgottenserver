@@ -64,7 +64,7 @@ mysqlUser = "forgottenserver"
 mysqlPass = ""
 mysqlDatabase = "forgottenserver"
 mysqlPort = 3306
-mysqlSock = ""
+mysqlSock = "/var/run/mysqld/mysqld.sock"
 
 -- Misc.
 -- NOTE: classicAttackSpeed set to true makes players constantly attack at regular
