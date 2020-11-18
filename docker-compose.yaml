@@ -15,8 +15,35 @@ services:
     volumes:
       - "mysql_socket:/var/run/mysqld/"
       - "./web:/var/www"
-      - "./server:/server"
-
+      - "//c/docker/server:/server"
+			
+	swag:
+    image: ghcr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - URL=yourdomain.url
+      - SUBDOMAINS=www,
+      - VALIDATION=http
+      - DNSPLUGIN=cloudflare #optional
+      - PROPAGATION= #optional
+      - DUCKDNSTOKEN= #optional
+      - EMAIL= #optional
+      - ONLY_SUBDOMAINS=false #optional
+      - EXTRA_DOMAINS= #optional
+      - STAGING=false #optional
+      - MAXMINDDB_LICENSE_KEY= #optional
+    volumes:
+      - //c/docker/swag:/config
+    ports:
+      - 443:443
+      - 80:80 #optional
+    restart: unless-stopped
+		
   db:
     image: mariadb
     restart: always
@@ -28,7 +55,7 @@ services:
       MYSQL_DATABASE: forgottenserver
     volumes:
       # Saves all the data in ./db directory
-      - ./db:/var/lib/mysql
+      - //c/docker/mariadb:/var/lib/mysql
       # Automatically executes schema.sql on startup
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
       - "mysql_socket:/var/run/mysqld/"
