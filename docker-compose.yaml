@@ -16,8 +16,7 @@ services:
       - "mysql_socket:/var/run/mysqld/"
       - "./web:/var/www"
       - "//c/docker/server:/server"
-			
-	swag:
+  swag:
     image: ghcr.io/linuxserver/swag
     container_name: swag
     cap_add:
@@ -61,6 +60,9 @@ services:
       - "mysql_socket:/var/run/mysqld/"
     networks:
       - db-network
+  
+  redis:
+    image: redis
 
   db-adminer:
     image: adminer
