@@ -13,15 +13,17 @@ services:
     networks:
       - db-network
     volumes:
-      - "mysql_socket:/var/run/mysqld/"	
-			
+      - "mysql_socket:/var/run/mysqld/"
+      - "./web:/var/www"
+      - "./server:/server"
+
   db:
-    image: mysql
+    image: mariadb
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: <your_root_password>
+      MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_USER: forgottenserver
-      MYSQL_PASSWORD: <your_db_password>
+      MYSQL_PASSWORD: password
       # Automatically creates a database
       MYSQL_DATABASE: forgottenserver
     volumes:
