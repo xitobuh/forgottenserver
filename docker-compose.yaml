@@ -42,7 +42,7 @@ services:
       - 443:443
       - 80:80 #optional
     restart: unless-stopped
-		
+    
   db:
     image: mariadb
     restart: always
