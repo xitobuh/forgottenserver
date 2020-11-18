@@ -12,6 +12,9 @@ services:
       - db
     networks:
       - db-network
+		volumes:
+      - "mysql_socket:/var/run/mysqld/"	
+			
   db:
     image: mysql
     restart: always
@@ -26,6 +29,7 @@ services:
       - ./db:/var/lib/mysql
       # Automatically executes schema.sql on startup
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+			- "mysql_socket:/var/run/mysqld/"
     networks:
       - db-network
 
@@ -36,6 +40,8 @@ services:
       - 8080:8080
     networks:
       - db-network
+		volumes:
+      - "mysql_socket:/var/run/mysqld/"		
 
 networks:
   db-network:
